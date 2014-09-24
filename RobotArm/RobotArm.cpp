@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <math.h>
+#include <iomanip>
 
 using namespace std;
 
@@ -56,8 +57,10 @@ int main(int argc, char* argv[]){
 
 #if defined _WIN32
 	system("del /f output.svg"); //Kill old svg if it exists
+	system("del /f outCoords.txt");
 #elif defined __unix
 	system("rm -f output.svg");
+	system("rm -f outCoords.txt");
 #endif
 
 	streambuf *coutbuf = std::cout.rdbuf(); //Save old buffer
@@ -89,10 +92,20 @@ int main(int argc, char* argv[]){
 
 	cout << "</svg>"; //End our file
 	outFile.close(); 
+	outFile.open("outCoords.txt", ofstream::out);
+	cout.rdbuf(outFile.rdbuf());
+	cout << "Coordinates for segments:\n";
+	for (int i = 0; i < xCoords->size(); i++){
+		cout << setprecision(2);
+		cout << "(" << xCoords->at(i) << "," << yCoords->at(i) << ") ";
+	}
+	cout << endl;
+	outFile.close();
 	cout.rdbuf(coutbuf); //Restore original cout
 	cout << "Coordinates for segments:\n";
 	for (int i = 0; i < xCoords->size(); i++){
-		cout << "(" << (int) xCoords->at(i) << "," << (int) yCoords->at(i) << ") ";
+		cout << setprecision(2);
+		cout << "(" << xCoords->at(i) << "," << yCoords->at(i) << ") ";
 	}
 	cout << endl;
 #if defined _WIN32
